@@ -7,29 +7,49 @@
 -- };
 
 
-class StackCommand inherits IO{
+class Main inherits IO{
+
+
+      prompt() : String {
+            {
+            in_string();
+            }
+      };
 
 
 
-      in_string() : s;
-
-      addCommand(s);
-
-      addCommand(s:String) StackCommand{
-
-         sCommand: Int <- 0;
-         iCommand: String <-"0";
-         counter: Int <-0;
 
 
-         if s <- "0"
+
+      addcommand() StackCommand {
+            {
+
+       
+
+
+         if s <- "0" then
+
+            out_string("DONE");
+
+
+            self;
+
+            }
+
 
 
       };
-      
-   
-   
 
+      
+
+   
+      main(){
+
+            s : String <- prompt()
+            addcommand(s);
+
+
+      }
 
 
 
