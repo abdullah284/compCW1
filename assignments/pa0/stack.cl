@@ -21,7 +21,7 @@ class Main inherits IO{
 
 
 
-      addcommand() StackCommand {
+      addcommand() String {
             {
 
        
@@ -32,7 +32,7 @@ class Main inherits IO{
             out_string("DONE");
 
 
-            self;
+            "ok";
 
             }
 
