@@ -1,55 +1,22 @@
 
-
-
-
-
-
-
-
 class List {
-    -- Define operations on empty lists.
- 
+
+    
     isNil() : Bool { true };
- 
-    -- Since abort() has return type Object and head() has return type
-    -- Int, we need to have an Int as the result of the method body,
-    -- even though abort() never returns.
- 
+
     head()  : String { { abort(); "0"; } };
- 
-    -- As for head(), the self is just to make sure the return type of
-    -- tail() is correct.
+
  
     tail()  : List { { abort(); self; } };
  
-    -- When we cons and element onto the empty list we get a non-empty
-    -- list. The (new Cons) expression creates a new list cell of class
-    -- Cons, which is initialized by a dispatch to init().
-    -- The result of init() is an element of class Cons, but it
-    -- conforms to the return type List, because Cons is a subclass of
-    -- List.
- 
+
     cons(i : String) : List {
        (new Cons).init(i, self)
     };
  
  };
  
- 
- (*
-  *  Cons inherits all operations from List. We can reuse only the cons
-  *  method though, because adding an element to the front of an emtpy
-  *  list is the same as adding it to the front of a non empty
-  *  list. All other methods have to be redefined, since the behaviour
-  *  for them is different from the empty list.
-  *
-  *  Cons needs two attributes to hold the integer of this list
-  *  cell and to hold the rest of the list.
-  *
-  *  The init() method is used by the cons() method to initialize the
-  *  cell.
-  *)
- 
+
  class Cons inherits List {
  
     car : String;	-- The element in this list cell
@@ -76,17 +43,6 @@ class List {
  
 
 
-
-
-
-
-
-
-
-
-
-
-
  class Main inherits IO{
 
 
@@ -98,8 +54,9 @@ class List {
     swapped1:String;
     swapped2:String;
 
+    ans:Bool;
 
-
+    x: Bool;
     lastchar :String;
     newlist : List;
     lastchar2 :String;
@@ -121,10 +78,7 @@ class List {
             { abort(); 0; }  -- the 0 is needed to satisfy the typchecker
             fi fi fi fi fi fi fi fi fi fi
          };
-     
-     (*
-       i2c is the inverse of c2i.
-     *)
+
          i2c(i : Int) : String {
         if i = 0 then "0" else
         if i = 1 then "1" else
@@ -140,14 +94,6 @@ class List {
             fi fi fi fi fi fi fi fi fi fi
          };
      
-     (*
-       a2i converts an ASCII string into an integer.  The empty string
-     is converted to 0.  Signed and unsigned strings are handled.  The
-     method aborts if the string does not represent an integer.  Very
-     long strings of digits produce strange answers because of arithmetic
-     overflow.
-     
-     *)
          a2i(s : String) : Int {
             if s.length() = 0 then 0 else
         if s.substr(0,1) = "-" then ~a2i_aux(s.substr(1,s.length()-1)) else
@@ -155,11 +101,7 @@ class List {
                a2i_aux(s)
             fi fi fi
          };
-     
-     (*
-      a2i_aux converts the usigned portion of the string.  As a programming
-     example, this method is written iteratively.
-     *)
+   
          a2i_aux(s : String) : Int {
         (let int : Int <- 0 in
                {
@@ -178,10 +120,7 @@ class List {
             )
          };
      
-     (*
-        i2a converts an integer to a string.  Positive and negative
-     numbers are handled correctly.
-     *)
+   
         i2a(i : Int) : String {
         if i = 0 then "0" else
             if 0 < i then i2a_aux(i) else
@@ -189,9 +128,7 @@ class List {
             fi fi
         };
      
-     (*
-        i2a_aux is an example using recursion.
-     *)
+ 
         i2a_aux(i : Int) : String {
             if i = 0 then "" else
             (let next : Int <- i / 10 in
@@ -202,21 +139,9 @@ class List {
 
 
 
-
-
-
-
-
-
-
-
-
-    
-
-
     print_list(l : List) : Object {
         if l.isNil() then 
-        out_string("\n")
+        out_string("")
         
                      else {
                  out_string(l.head());
@@ -237,7 +162,6 @@ class List {
 
         out_string(">");
         value <- in_string();
-        -- out_string("\n");
 
         mylist <- decide(value, mylist);
         }
@@ -249,17 +173,21 @@ class List {
     };
 
     decide(value:String, mylist:List): List{
+        
         if value = "d" then{
 
             print_list(mylist);
 
             mylist;
             }
-        else if value = "e" then{
+        else if value = "e" then {
 
-            mylist <- evaluate(mylist);
+         
+            mylist <- evaluatedecide(mylist);
 
             mylist;
+
+
         }       
         else {
 
@@ -278,8 +206,173 @@ class List {
     };
 
 
+    evaluatedecide(mylist:List): List{
+{
+        x <- evaluatable(mylist);
+
+        mylist <- evaluatedecide2(mylist,x);
+
+        mylist;
+
+}
+
+    };
+
+    evaluatedecide2(mylist:List, x:Bool): List{
+
+
+
+        if x = true then{
+
+
+            mylist <- evaluate(mylist);
+            mylist;
+
+        }
+        else{
+
+            mylist;
+
+        }
+
+        
+        
+        fi
+
+    };
+
+
+    evaluatable(mylist:List): Bool{
+
+        if (Not(mylist.isNil())) then{
+            newlist <- mylist.tail();
+
+            x <- evaluatable2(newlist);
+
+            ans <- evaluatable22(x);
+
+            ans;
+        }
+        else{
+
+            false;
+        }
+        fi
+
+    };
+
+    evaluatable22(x:Bool):Bool{
+
+
+        if x=true then{
+
+            true;
+
+        }
+        else{
+
+                        -- out_string("evaluatable22fail||");
+
+            false;
+
+        }
+        fi
+
+
+    };
+
+
+    evaluatable2(mylist:List): Bool{
+
+        if (Not(mylist.isNil())) then{
+            newlist <- mylist.tail();
+        -- out_string("3gone||");
+
+            x <- evaluatable4(newlist);
+
+            -- if x=true then{
+
+            --     true;
+
+            -- }
+            -- else{
+            --     false;
+            -- }
+
+            -- fi
+
+
+            ans <- evaluatable22(x);
+
+            ans;
+        }
+        else{
+            -- out_string("evaluatable2fail||");
+
+
+            false;
+        }
+        fi
+
+    };
+
+    evaluatable3(mylist:List): Bool{
+
+        if (Not(mylist.isNil())) then{
+            newlist <- mylist.tail();
+
+            x <- evaluatable4(newlist);
+
+            -- if x=true then{
+
+            --     true;
+
+            -- }
+            -- else{
+            --     false;
+            -- }
+            -- fi
+
+            ans <- evaluatable22(x);
+            -- out_string("322fail||");
+
+            
+            ans;
+        }
+        else{
+            -- out_string("evaluatable3fail||");
+
+
+            false;
+        }
+        fi
+
+    };
+
+    evaluatable4(mylist:List): Bool{
+
+        if (Not(mylist.isNil())) then{
+          true;
+        }
+        else{
+            -- out_string("evaluatable4fail||");
+
+
+            false;
+        }
+        fi
+
+    };
+
+
+
+
+
+
     evaluate(mylist:List): List{
     {
+
+         
         lastchar <- mylist.head();
         newlist <- mylist.tail();
         lastchar2 <- newlist.head();
@@ -346,39 +439,24 @@ class List {
 
         mylist <- new List;
 
-        mylist <- mylist.cons("4");
 
-        mylist <- mylist.cons("1");
-        mylist <- mylist.cons("2");
-        mylist <- mylist.cons("6");
-        mylist <- mylist.cons("+");
-        mylist <- mylist.cons("7");
-        mylist <- mylist.cons("1");
-        mylist <- mylist.cons("+");
-        mylist <- mylist.cons("6");
-        mylist <- mylist.cons("8");
-
-        mylist <- mylist.cons("+");
+        -- mylist <- mylist.cons("1");
+        -- mylist <- mylist.cons("2");
+        -- mylist <- mylist.cons("6");
+        -- mylist <- mylist.cons("+");
+        -- mylist <- mylist.cons("7");
+        -- mylist <- mylist.cons("1");
+        -- mylist <- mylist.cons("+");
+        -- mylist <- mylist.cons("6");
+        -- mylist <- mylist.cons("8");
+        -- mylist <- mylist.cons("+");
  
 
 
         mylist <- prompt(mylist);
-    
-
-
-
-    
-
-
         1;
     }   
-    
     };
-
-
-
-
-
 };
 
     
